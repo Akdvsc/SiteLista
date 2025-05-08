@@ -1,0 +1,110 @@
+comentario: atuamente dando certo
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minha Lista de Desejos</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f6fa;
+      margin: 0;
+    }
+    header {
+      background: #2980b9;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      font-size: 1.6rem;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .item {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .item:hover {
+      transform: scale(1.02);
+    }
+    .item img {
+      width: 100%;
+      height: auto;
+    }
+    .info {
+      padding: 1rem;
+    }
+    .info h3 {
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+    }
+    .info p {
+      margin: 0;
+      color: #555;
+    }
+    .info a {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #2980b9;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #2c3e50;
+      color: white;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>Minha Lista de Desejos</header>
+
+<main class="container" id="wishlist"></main>
+
+<footer>Atualizado automaticamente via Google Planilhas &copy; 2025</footer>
+
+<script>
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRFEqIl8nHKZpcpMyXa3Xgjo_lwqsRqAy6JP21rq8l9CRs8pnL0MnThoLd6fl3MZzQdaGpdk-AhggB-/pub?output=csv";
+
+  fetch(CSV_URL)
+    .then(res => res.text())
+    .then(data => {
+      const lines = data.split("\n").slice(1); // Remove cabeçalho
+      const container = document.getElementById("wishlist");
+
+      lines.forEach(row => {
+        const parts = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // trata vírgulas dentro de aspas
+        const [nome, preco, link, imagem] = parts.map(p => p.replace(/^"|"$/g, "").trim());
+
+        if (!nome || !link || !imagem) return;
+
+        const item = document.createElement("div");
+        item.className = "item";
+        item.innerHTML = `
+          <img src="${imagem}" alt="${nome}">
+          <div class="info">
+            <h3>${nome}</h3>
+            <p>${preco}</p>
+            <a href="${link}" target="_blank">Ver produto</a>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    });
+</script>
+
+</body>
+</html>
